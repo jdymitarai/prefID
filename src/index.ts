@@ -16,7 +16,12 @@ export {
 } from "./utils/entropy.js";
 export { getPrefix, isId, parseId } from "./utils/validate.js";
 
-export type { IdGenerator, IdOptions, PrefixedId } from "./types/index.js";
+export type {
+  BatchIdGenerator,
+  IdGenerator,
+  IdOptions,
+  PrefixedId,
+} from "./types/index.js";
 export type {
   GetTimestampOptions,
   SortableIdOptions,

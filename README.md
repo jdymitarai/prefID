@@ -71,6 +71,21 @@ id("user"); // => "user_a8Kd0f2bQ1nR7pZ3xW4mT6y"
 id("us er"); // throws TypeError: prefid: prefix "us er" contains an invalid character " " at index 2.
 ```
 
+## Bulk generation
+
+Need many IDs at once (seeding, bulk inserts)? `many` draws the random bytes in
+a few large chunks instead of once per ID:
+
+```ts
+import { id, sortableId } from "prefid";
+
+id.many("user", 1000); // => ["user_…", …] (1000 IDs)
+sortableId.many("evt", 1000); // still strictly increasing
+```
+
+`count` is an integer from 0 to 10,000. For sortable IDs there is no speed-up
+over calling `sortableId` in a loop; `many` is there for the same API.
+
 ## Install
 
 ```bash
