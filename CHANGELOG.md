@@ -7,12 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-10-11
+
+Opt-in additions only. Existing calls behave as in 1.1.2: for the same random
+bytes, single-ID output is byte-identical.
+
 ### Added
 
 - `entropyBits(options?)`, `sizeForEntropy(bits, alphabet?)` and `collisionProbability(count, options?)` compute the entropy and birthday-collision probability of an ID configuration. `collisionProbability` works in log space with `Math.expm1`, so realistic inputs do not round to 0.
 - `strictPrefix` option on `createId()` and `createSortableId()`. When `true`, the prefix must be 1-63 ASCII letters or digits, otherwise a `TypeError` names the first offending character. Off by default, so existing behavior is unchanged.
 - `many(prefix, count)` on `id`, `sortableId` and the generators returned by `createId()` and `createSortableId()`. It returns `count` IDs (0 to 10,000) and draws random bytes in chunks of at most 65,536 bytes, so it works in browsers, Deno and Bun. Sortable batches stay strictly increasing (with the default `monotonic: true`). It checks the prefix exactly like a single call, including `strictPrefix` and even when `count` is 0.
 - `BatchIdGenerator<S>` type. `IdGenerator` is unchanged, so existing code that assigns a plain function to it keeps compiling.
+
+### Changed
+
+- `publint` and `@arethetypeswrong/cli` are now pinned devDependencies, run by the new `npm run lint:package` script (also part of `npm run verify`), so the packaging check only changes through a reviewed lockfile update. No runtime dependencies were added.
+- Dependabot now proposes grouped minor and patch updates for dev dependencies, with major upgrades arriving as separate pull requests.
+- A `.gitattributes` file normalises line endings to LF, so Windows checkouts pass the formatting check.
 
 ## [1.1.2] - 2026-10-09
 
@@ -177,7 +188,8 @@ will only ship in a new major version.
 - Cryptographically secure random source with unbiased sampling and a Node
   `crypto` fallback for runtimes without the Web Crypto global.
 
-[Unreleased]: https://github.com/suhailopensource/prefID/compare/v1.1.2...HEAD
+[Unreleased]: https://github.com/suhailopensource/prefID/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/suhailopensource/prefID/compare/v1.1.2...v1.2.0
 [1.1.2]: https://github.com/suhailopensource/prefID/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/suhailopensource/prefID/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/suhailopensource/prefID/compare/v1.0.1...v1.1.0
