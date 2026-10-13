@@ -164,21 +164,12 @@ export function createSortableId<S extends string = "_">(
     }
 
     if (nextTime > SORTABLE_TIME_MAX) {
-      lastTime = -1;
-      lastRandom = [];
       throw new RangeError(
         `prefid: timestamp ${nextTime} exceeds the sortable range (2^48-1 ms).`,
       );
     }
 
-    let timeBody: string;
-    try {
-      timeBody = encodeTime(nextTime, alphabet, timestampSize);
-    } catch (err) {
-      lastTime = -1;
-      lastRandom = [];
-      throw err;
-    }
+    const timeBody = encodeTime(nextTime, alphabet, timestampSize);
 
     lastTime = nextTime;
     lastRandom = nextRandom;

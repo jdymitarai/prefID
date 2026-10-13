@@ -133,26 +133,43 @@ describe("sortableId() — monotonic overflow", () => {
     expect(last!).toBeGreaterThan(100);
   });
 
-  it("throws when monotonic spill-over exceeds 2^48 - 1 and recovers on subsequent calls", () => {
+  it("keeps throwing after spilling past 2^48 - 1", () => {
     let now = SORTABLE_TIME_MAX;
-    const { gen, set } = withClock(now, { alphabet: "01", randomSize: 1 });
-    let error: unknown;
-    for (let i = 0; i < 3; i++) {
-      try {
-        gen("evt");
-      } catch (err) {
-        error = err;
-        break;
-      }
-    }
-    expect(error).toBeInstanceOf(RangeError);
-    expect((error as RangeError).message).toBe(
-      `prefid: timestamp ${SORTABLE_TIME_MAX + 1} exceeds the sortable range (2^48-1 ms).`,
-    );
+    const gen = createSortableId({
+      now: () => now,
+      alphabet: "01",
+      randomSize: 1,
+    });
 
-    set(1_700_000_000_000);
-    const recovered = gen("evt");
-    expect(getTimestamp(recovered, { alphabet: "01" })).toBe(1_700_000_000_000);
+    expect(() => {
+      for (let i = 0; i < 3; i++) gen("evt");
+    }).toThrow(RangeError);
+
+    now = Date.now();
+    expect(() => gen("evt")).toThrow(RangeError);
+
+    const fresh = createSortableId({
+      now: () => now,
+      alphabet: "01",
+      randomSize: 1,
+    });
+    expect(() => fresh("evt")).not.toThrow();
+  });
+
+  it("keeps ids in order after a bad clock reading", () => {
+    let now = 2_000;
+    const gen = createSortableId({ now: () => now });
+
+    const a = gen("evt");
+    now = 1_000;
+    const b = gen("evt");
+    now = 2 ** 48 + 5;
+    expect(() => gen("evt")).toThrow(RangeError);
+    now = 1_000;
+    const c = gen("evt");
+
+    expect(b > a).toBe(true);
+    expect(c > b).toBe(true);
   });
 });
 
