@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `createSortableId()` now throws a `RangeError` when the timestamp exceeds `SORTABLE_TIME_MAX` (2^48 - 1 ms), preventing generation of IDs that its own decoder (`getTimestamp()`) rejects. State updates are deferred until candidate validation succeeds, preventing clock glitches or monotonic spill-overs from permanently poisoning the generator.
+
 ## [1.2.0] - 2026-10-11
 
 Opt-in additions only. Existing calls behave as in 1.1.2: for the same random
